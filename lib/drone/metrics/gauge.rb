@@ -10,6 +10,7 @@ module Drone
       attr_reader :name
     
       def initialize(name, &block)
+        raise "Block expected" unless block
         @name = name
         @block = block
       end
