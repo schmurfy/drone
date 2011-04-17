@@ -5,6 +5,14 @@ Drone is a monitoring library designed to collect data from your application and
 to virtually any monitoring tool.
 Its core is heavily based on the impressive works of Coda Hale on the metrics java library.
 
+A fully working example is included in examples/simple, to run it
+(I suppose you already cloned the repository and have a prompt at the root of it):
+
+    gem install bundler
+    bundle
+    ruby examples/simple.rb
+  
+The example will output the collected statistics directly on the console every second.
 
 # How is it done
 
@@ -26,6 +34,16 @@ The library is split in different parts
 
 - MRI 1.8.7+
 - Rubinius 1.2.2+
+
+
+# Status
+ - Most of the features I wanted in are:
+  - timing method calls
+  - method calls rate
+  - counters
+  - gauges
+
+ - Decent test coverage (Simplecov report ~ 87% for what is worth)
 
 # Usage
   
