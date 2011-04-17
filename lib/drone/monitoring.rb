@@ -20,22 +20,35 @@ module Drone
       
       ##
       # Monitor the call rate of the following method
+      # 
+      # @param [String] name metric name, it must be unique and will be shared
+      #                       among all the objects of this class
       # @api public
       # 
-      def monitor_rate(*args)
-        rate = Metrics::Meter.new(*args)
-        Drone::register_meter(rate)
-        @_rate_waiting = rate
+      def monitor_rate(name)
+        meter = Drone::find_metric(name) || Metrics::Meter.new(name)
+        unless meter.is_a?(Metrics::Meter)
+          raise(TypeError, "metric #{name} is already defined as #{rate.class}")
+        end
+        
+        Drone::register_meter(meter)
+        @_rate_waiting = meter
       end
       
       ##
       # Monitor the time of execution as well as the
       # call rate
       # 
+      # @param [String] name metric name, it must be unique and will be shared
+      #                       among all the objects of this class
+      # 
       # @api public
       # 
-      def monitor_time(*args)
-        timer = Metrics::Timer.new(*args)
+      def monitor_time(name)
+        timer = Drone::find_metric(name) || Metrics::Timer.new(name)
+        unless timer.is_a?(Metrics::Timer)
+          raise(TypeError, "metric #{name} is already defined as #{rate.class}")
+        end
         Drone::register_meter(timer)
         @_timer_waiting = timer
       end

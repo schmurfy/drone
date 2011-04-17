@@ -30,6 +30,13 @@ The library is split in different parts
 - the schedulers
   this is where the timers are scheduled, currently there is only one scheduler: eventmachine
 
+## Constraints
+
+- the name of each metric can be formatted how it pleases you (note that output interfaces may expect some format)
+  but the name is expected to be unique or you could end up reusing the same metric without wanting it.
+  (this only applies to monitor_time and monitor_rate helpers but could apply anywhere else as needed)
+
+
 # Supported Runtimes
 
 - MRI 1.8.7+

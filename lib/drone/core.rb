@@ -44,6 +44,16 @@ module Drone
       @meters.each{|m| yield(m) }
     end
     
+    
+    ##
+    # Fetch a metric by its name
+    # 
+    # @param [String] name The mtric's name
+    # 
+    def find_metric(name)
+      @meters.detect{|m| m.name == name }
+    end
+    
     ##
     # Instantiate an output module.
     # 

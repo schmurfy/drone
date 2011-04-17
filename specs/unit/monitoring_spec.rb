@@ -9,27 +9,37 @@ EM.describe 'Monitoring' do
       
       Drone::init_drone()
       
-      klass = Class.new() do
+      @klass = Class.new() do
         include Drone::Monitoring
         
         monitor_rate("users/no_args")
-        def a_method_without_args
-          42
-        end
+        def a_method_without_args; 42; end
         
         monitor_rate("users/with_args")
-        def method_with_args(a, b)
-          a + b
-        end
+        def method_with_args(a, b); a + b; end
         
         monitor_rate("users/with_block")
-        def method_with_block(&block)
-          block.call
-        end
+        def method_with_block(&block); block.call; end
         
       end
-      @obj = klass.new
+      @obj = @klass.new
       
+    end
+    
+    should 'reuse same meter for every instances of this class' do
+      meter = Drone::find_metric("users/no_args")
+      meter.count.should == 0
+      
+      obj1 = @klass.new
+      obj2 = @klass.new
+      
+      obj1.a_method_without_args()
+      meter.count.should == 1
+      
+      obj2.a_method_without_args()
+      meter.count.should == 2
+      
+      done
     end
     
     should 'increment counter on call' do
@@ -68,19 +78,13 @@ EM.describe 'Monitoring' do
         include Drone::Monitoring
         
         monitor_time("users/no_args")
-        def a_method_without_args
-          42
-        end
+        def a_method_without_args; 42; end
         
         monitor_time("users/with_args")
-        def method_with_args(a, b)
-          a + b
-        end
+        def method_with_args(a, b); a + b; end
         
         monitor_time("users/with_block")
-        def method_with_block(&block)
-          block.call
-        end
+        def method_with_block(&block); block.call; end
         
       end
       @obj = klass.new
