@@ -1,0 +1,94 @@
+require File.expand_path('../metrics/meter', __FILE__)
+require File.expand_path('../metrics/timer', __FILE__)
+
+module Drone
+  ##
+  # This module contains what is needed to instruments
+  # class methods easily
+  # 
+  module Monitoring
+    def self.included(base)
+      base.class_eval do
+        extend ClassMethods
+      end
+      
+      Drone::register_monitored_class(base)
+    end
+    
+    module ClassMethods
+    # external API
+      
+      ##
+      # Monitor the call rate of the following method
+      # @api public
+      # 
+      def monitor_rate(*args)
+        rate = Metrics::Meter.new(*args)
+        Drone::register_meter(rate)
+        @_rate_waiting = rate
+      end
+      
+      ##
+      # Monitor the time of execution as well as the
+      # call rate
+      # 
+      # @api public
+      # 
+      def monitor_time(*args)
+        timer = Metrics::Timer.new(*args)
+        Drone::register_meter(timer)
+        @_timer_waiting = timer
+      end
+      
+      
+    # internals
+      
+      ##
+      # @private
+      # 
+      def method_added(m)
+        return if @_ignore_added
+        
+        @_ignore_added = true
+        ma_rate_meter(m) if @_rate_waiting
+        ma_timer_meter(m) if @_timer_waiting
+        @_ignore_added = false
+      end
+      
+      ##
+      # @private
+      # 
+      def ma_rate_meter(m)
+        rate = @_rate_waiting
+        @_rate_waiting = nil
+        
+        define_method("instrumented_#{m}") do |*args, &block|
+          rate.mark()
+          send("original_#{m}", *args, &block)
+        end
+        
+        alias_method "original_#{m}", m
+        alias_method m, "instrumented_#{m}"
+      end
+      
+      ##
+      # @private
+      # 
+      def ma_timer_meter(m)
+        timer = @_timer_waiting
+        @_timer_waiting = nil
+        
+        define_method("instrumented_#{m}") do |*args, &block|
+          timer.time do
+            send("original_#{m}", *args, &block)
+          end
+        end
+        
+        alias_method "original_#{m}", m
+        alias_method m, "instrumented_#{m}"
+      end
+      
+    end
+    
+  end
+end
