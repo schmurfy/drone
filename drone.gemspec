@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "drone"
   s.version     = Drone::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
+  s.authors     = ["Julien Ammous"]
+  s.email       = []
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Drone is a monitoring library}
+  s.description = %q{Drone is a monitoring library based on the metrics java library}
 
   s.rubyforge_project = "drone"
 
