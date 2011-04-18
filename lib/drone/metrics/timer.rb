@@ -5,20 +5,16 @@ require File.expand_path('..//meter', __FILE__)
 module Drone
   module Metrics
     class Timer
+      attr_reader :name
+      
       def initialize(name = 'calls')
+        @name = name
         @histogram = Histogram.new(Histogram::TYPE_BIASED)
-        @meter = Meter.new(name)
         clear()
       end
       
       def count
         @histogram.count
-      end
-      
-      [:fifteen_minutes_rate, :five_minutes_rate, :mean_rate, :one_minute_rate].each do |attr_name|
-        define_method(attr_name) do
-          @meter.send(attr_name)
-        end
       end
       
       # may requires a conversion... or not
@@ -37,7 +33,6 @@ module Drone
       def update(duration)
         if duration >= 0
           @histogram.update(duration)
-          @meter.mark()
         end
       end
       
@@ -48,13 +43,6 @@ module Drone
         yield()
       ensure
         update(Time.now.to_f - started_at.to_f)
-      end
-      
-      
-      
-      
-      def name
-        @meter.name
       end
       
     end

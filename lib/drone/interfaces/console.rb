@@ -27,7 +27,6 @@ module Drone
             
           when Metrics::Timer
             puts "[Timer] #{m.name}"
-            print_meter(m)
             print_histogram(m)
             
           when Metrics::Meter

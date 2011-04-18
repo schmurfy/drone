@@ -7,6 +7,7 @@ include Drone
 EM.describe 'Meter Metrics' do
   before do
     Drone::init_drone()
+    Drone::start_monitoring()
   end
   
   describe "A meter metric with no events" do
@@ -21,6 +22,26 @@ EM.describe 'Meter Metrics' do
 
     should "have a mean rate of 0 events/sec" do
       @meter.mean_rate.should == 0.0
+      done
+    end
+    
+    should "have a mean rate of zero" do
+      @meter.mean_rate.should.be.close?(0, 0.001)
+      done
+    end
+    
+    should "have a one-minute rate of zero" do
+      @meter.one_minute_rate.should.be.close?(0, 0.001)
+      done
+    end
+    
+    should "have a five-minute rate of zero" do
+      @meter.five_minutes_rate.should.be.close?(0, 0.001)
+      done
+    end
+    
+    should "have a fifteen-minute rate of zero" do
+      @meter.fifteen_minutes_rate.should.be.close?(0, 0.001)
       done
     end
   end

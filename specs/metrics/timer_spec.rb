@@ -48,26 +48,6 @@ EM.describe 'Timer Metrics' do
       p999.should.be.close?(0, 0.001)
       done
     end
-
-    should "have a mean rate of zero" do
-      @timer.mean_rate.should.be.close?(0, 0.001)
-      done
-    end
-    
-    should "have a one-minute rate of zero" do
-      @timer.one_minute_rate.should.be.close?(0, 0.001)
-      done
-    end
-    
-    should "have a five-minute rate of zero" do
-      @timer.five_minutes_rate.should.be.close?(0, 0.001)
-      done
-    end
-    
-    should "have a fifteen-minute rate of zero" do
-      @timer.fifteen_minutes_rate.should.be.close?(0, 0.001)
-      done
-    end
     
     should "have no values" do
       @timer.values.should == []
