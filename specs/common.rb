@@ -4,8 +4,6 @@ require 'rubygems'
 
 puts "Testing with ruby #{RUBY_VERSION} and rubygems #{Gem::VERSION}"
 
-require 'bundler/setup'
-
 if (RUBY_VERSION >= "1.9") && ENV['COVERAGE']
   require 'simplecov'
   ROOT = File.expand_path('../../', __FILE__)
@@ -19,6 +17,8 @@ if (RUBY_VERSION >= "1.9") && ENV['COVERAGE']
     root(ROOT)
   end
 end
+
+require 'bundler/setup'
 
 require 'bacon'
 require 'mocha'
