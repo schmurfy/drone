@@ -56,6 +56,15 @@ module Drone
         
       end
       
+      ##
+      # @private
+      # 
+      def self.reset
+        @timers_once.clear()
+        @timers_periodic.clear()
+        @started = false
+      end
+      
     end
   end
 end
