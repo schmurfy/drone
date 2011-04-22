@@ -62,7 +62,7 @@ describe 'Exponentially Decaying Sample' do
     end
     
     should "rescale after 1 hour" do
-      @sample.expects(:rescale)
+      @sample.expects(:rescale).with(anything())
       
       Delorean.time_travel_to("2 hours from now") do
         @sample.update(1)

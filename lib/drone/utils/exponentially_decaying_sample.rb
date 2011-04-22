@@ -39,7 +39,7 @@ class ExponentiallyDecayingSample
     
     now = current_time()
     if now >= @next_scale_time
-      rescale(now, @next_scale_time)
+      rescale(now)
     end
   end
   
