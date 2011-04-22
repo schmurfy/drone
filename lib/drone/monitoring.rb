@@ -75,13 +75,13 @@ module Drone
         rate = @_rate_waiting
         @_rate_waiting = nil
         
-        define_method("instrumented_#{m}") do |*args, &block|
+        define_method("#{m}_with_meter") do |*args, &block|
           rate.mark()
-          send("original_#{m}", *args, &block)
+          send("#{m}_without_meter", *args, &block)
         end
         
-        alias_method "original_#{m}", m
-        alias_method m, "instrumented_#{m}"
+        alias_method "#{m}_without_meter", m
+        alias_method m, "#{m}_with_meter"
       end
       
       ##
@@ -91,14 +91,14 @@ module Drone
         timer = @_timer_waiting
         @_timer_waiting = nil
         
-        define_method("instrumented_#{m}") do |*args, &block|
+        define_method("#{m}_with_timer") do |*args, &block|
           timer.time do
-            send("original_#{m}", *args, &block)
+            send("#{m}_without_timer", *args, &block)
           end
         end
         
-        alias_method "original_#{m}", m
-        alias_method m, "instrumented_#{m}"
+        alias_method "#{m}_without_timer", m
+        alias_method m, "#{m}_with_timer"
       end
       
     end

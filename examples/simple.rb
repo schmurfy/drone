@@ -14,12 +14,13 @@ class User
     @name = name
   end
   
-  monitor_rate("users:rename")
+  monitor_rate("users:rename:rate")
   def rename(new_name)
     @name = new_name
   end
   
-  monitor_time("users:do_something")
+  monitor_time("users:do_something:time")
+  monitor_rate("users:do_something:rate")
   def do_something
     # just eat some cpu
     0.upto(rand(2000)) do |n|
