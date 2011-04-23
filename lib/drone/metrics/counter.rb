@@ -1,11 +1,16 @@
+require File.expand_path('../metric', __FILE__)
+
 module Drone
   module Metrics
     
     class Counter
       attr_reader :value, :name
+    class Counter < Metric
+      attr_reader :value
     
       def initialize(name, initial_value = 0)
-        @name = name
+        super(name)
+        
         @value = initial_value
       end
     

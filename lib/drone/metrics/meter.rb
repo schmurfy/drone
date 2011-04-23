@@ -1,5 +1,6 @@
 require 'eventmachine'
 
+require File.expand_path('../metric', __FILE__)
 require File.expand_path('../../core', __FILE__)
 require File.expand_path('../../utils/ewma', __FILE__)
 
@@ -8,12 +9,13 @@ module Drone
     # A meter metric which measures mean throughput and one-, five-, and
     # fifteen-minute exponentially-weighted moving average throughputs.
     class Meter
+    class Meter < Metric
       INTERVAL = 5
       
-      attr_reader :count, :name
+      attr_reader :count
       
       def initialize(name)
-        @name = name
+        super(name)
         @start_time = Time.now
         @count = 0
         @rates = {

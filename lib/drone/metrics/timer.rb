@@ -1,6 +1,7 @@
 
 require File.expand_path('../histogram', __FILE__)
 require File.expand_path('..//meter', __FILE__)
+require File.expand_path('../metric', __FILE__)
 
 module Drone
   module Metrics
@@ -10,11 +11,10 @@ module Drone
     # 
     # All the times are in milliseconds.
     # 
-    class Timer
-      attr_reader :name
+    class Timer < Metric
       
       def initialize(name = 'calls')
-        @name = name
+        super(name)
         @histogram = Histogram.new(Histogram::TYPE_BIASED)
         clear()
       end

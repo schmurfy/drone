@@ -1,15 +1,19 @@
 require File.expand_path('../../utils/uniform_sample', __FILE__)
 require File.expand_path('../../utils/exponentially_decaying_sample', __FILE__)
+require File.expand_path('../metric', __FILE__)
 
 module Drone
   class Histogram
+  class Histogram < Metric
     TYPE_UNIFORM  = lambda{ UniformSample.new(1028) }
     TYPE_BIASED   = lambda{ ExponentiallyDecayingSample.new(1028, 0.015) }
     
     MIN = (-(2**63)).freeze
     MAX = ((2**64) - 1).freeze
     
-    def initialize(sample_or_type = TYPE_UNIFORM)
+    def initialize(sample_or_type = TYPE_UNIFORM, name = "")
+      super(name)
+      
       if sample_or_type.is_a?(Proc)
         @sample = sample_or_type.call()
       else

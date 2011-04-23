@@ -1,3 +1,5 @@
+require File.expand_path('../metric', __FILE__)
+
 module Drone
   module Metrics
     
@@ -6,12 +8,11 @@ module Drone
     # will be called when the value is asked, the block
     # is expected to return a number
     # 
-    class Gauge
-      attr_reader :name
+    class Gauge < Metric
     
       def initialize(name, &block)
         raise "Block expected" unless block
-        @name = name
+        super(name)
         @block = block
       end
     
