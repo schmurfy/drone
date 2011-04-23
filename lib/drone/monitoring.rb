@@ -31,7 +31,7 @@ module Drone
           raise(TypeError, "metric #{name} is already defined as #{rate.class}")
         end
         
-        Drone::register_meter(meter)
+        Drone::register_metric(meter)
         @_rate_waiting = meter
       end
       
@@ -49,7 +49,7 @@ module Drone
         unless timer.is_a?(Metrics::Timer)
           raise(TypeError, "metric #{name} is already defined as #{rate.class}")
         end
-        Drone::register_meter(timer)
+        Drone::register_metric(timer)
         @_timer_waiting = timer
       end
       

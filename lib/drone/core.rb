@@ -23,7 +23,7 @@ module Drone
   class <<self
     
     def init_drone(scheduler = Schedulers::EMScheduler)
-      @meters = []
+      @metrics = []
       @scheduler = scheduler
       @monitored_classes = []
       @output_modules = []
@@ -41,7 +41,7 @@ module Drone
     
     def each_metric
       raise "Block expected" unless block_given?
-      @meters.each{|m| yield(m) }
+      @metrics.each{|m| yield(m) }
     end
     
     
@@ -51,7 +51,7 @@ module Drone
     # @param [String] name The mtric's name
     # 
     def find_metric(name)
-      @meters.detect{|m| m.name == name }
+      @metrics.detect{|m| m.name == name }
     end
     
     ##
@@ -81,7 +81,7 @@ module Drone
     # @api public
     # 
     def register_counter(type)
-      register_meter( Drone::Metrics::Counter.new(type) )
+      register_metric( Drone::Metrics::Counter.new(type) )
     end
     
     ##
@@ -90,21 +90,20 @@ module Drone
     # @api public
     # 
     def register_gauge(type, &block)
-      register_meter( Drone::Metrics::Gauge.new(type, &block) )
+      register_metric( Drone::Metrics::Gauge.new(type, &block) )
     end
     
     ##
-    # Register a new meter
+    # Register a new metric
     # This method can be used bu the user but the prefered
     # way is to use the register_counter / register_gauge methods
     # 
-    # @param [Meter] meter The Meter to register
-    # @api private
+    # @param [Metric] metric The Metric to register
     # @private
     # 
-    def register_meter(meter)
-      @meters << meter
-      meter
+    def register_metric(metric)
+      @metrics << metric
+      metric
     end
     
     ##
