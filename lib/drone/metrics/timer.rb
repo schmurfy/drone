@@ -4,6 +4,12 @@ require File.expand_path('..//meter', __FILE__)
 
 module Drone
   module Metrics
+    ##
+    # The timer metric will record the time spent in a given method
+    # or any block of code.
+    # 
+    # All the times are in milliseconds.
+    # 
     class Timer
       attr_reader :name
       
@@ -28,21 +34,26 @@ module Drone
         @histogram.clear()
       end
       
-      #
-      # duration: milliseconds
+      ##
+      # Method used to record a new duration
+      # 
+      # @param [Float] duration A duration in milliseconds
+      # 
       def update(duration)
         if duration >= 0
           @histogram.update(duration)
         end
       end
       
-      #
+      ##
       # time and record the duration of the block
+      # @yield [] The block to time
+      # 
       def time
         started_at = Time.now.to_f
         yield()
       ensure
-        update(Time.now.to_f - started_at.to_f)
+        update((Time.now.to_f - started_at.to_f) * 1000)
       end
       
     end

@@ -93,7 +93,7 @@ EM.describe 'Monitoring' do
     
     should 'time call with no args' do
       Drone::Metrics::Timer.any_instance.expects(:update).with{|delay|
-          delay.should.be.close?(0, 0.001)
+          delay.should.be.close?(0, 0.1)
           true
         }
       
@@ -104,7 +104,7 @@ EM.describe 'Monitoring' do
     
     should 'time call with args' do
       Drone::Metrics::Timer.any_instance.expects(:update).with{|delay|
-          delay.should.be.close?(0, 0.001)
+          delay.should.be.close?(0, 0.1)
           true
         }
       
@@ -115,7 +115,7 @@ EM.describe 'Monitoring' do
     
     should 'time call with a block' do
       Drone::Metrics::Timer.any_instance.expects(:update).with{|delay|
-          delay.should.be.close?(0, 0.001)
+          delay.should.be.close?(0, 0.1)
           true
         }
       
