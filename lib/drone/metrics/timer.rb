@@ -1,6 +1,6 @@
-
+require 'forwardable'
 require File.expand_path('../histogram', __FILE__)
-require File.expand_path('..//meter', __FILE__)
+require File.expand_path('../meter', __FILE__)
 require File.expand_path('../metric', __FILE__)
 
 module Drone
@@ -12,6 +12,9 @@ module Drone
     # All the times are in milliseconds.
     # 
     class Timer < Metric
+      extend Forwardable
+      
+      def_delegators :@histogram, :count, :min, :max, :mean, :stdDev, :percentiles, :values
       
       def initialize(name = 'calls')
         super(name)
@@ -21,13 +24,6 @@ module Drone
       
       def count
         @histogram.count
-      end
-      
-      # may requires a conversion... or not
-      [:count, :min, :max, :mean, :stdDev, :percentiles, :values].each do |attr_name|
-        define_method(attr_name) do |*args|
-          @histogram.send(attr_name, *args)
-        end
       end
       
       def clear
