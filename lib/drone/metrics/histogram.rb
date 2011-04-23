@@ -3,7 +3,15 @@ require File.expand_path('../../utils/exponentially_decaying_sample', __FILE__)
 require File.expand_path('../metric', __FILE__)
 
 module Drone
-  class Histogram
+  
+  ##
+  # An Histogram store a list of values (1028) and can
+  # compute on demand statistics on those values:
+  # - min/max
+  # - mean
+  # - stddev
+  # - percentiles
+  # 
   class Histogram < Metric
     TYPE_UNIFORM  = lambda{ UniformSample.new(1028) }
     TYPE_BIASED   = lambda{ ExponentiallyDecayingSample.new(1028, 0.015) }

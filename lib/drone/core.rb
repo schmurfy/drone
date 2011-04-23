@@ -68,15 +68,8 @@ module Drone
     end
     
     ##
-    # Register a monitored class.
-    # @private
-    # 
-    def register_monitored_class(klass)
-      @monitored_classes << klass
-    end
-    
-    ##
     # Register a new counter
+    # @see Drone::Metrics::Counter
     # @param [String] type Name of this metric
     # @api public
     # 
@@ -84,8 +77,20 @@ module Drone
       register_metric( Drone::Metrics::Counter.new(type) )
     end
     
+    
+    ##
+    # Register an Histogram
+    # @see Drone::Metrics::Histogram
+    # @param [String] name Name of this metric
+    # @param [optional,Enum] type one of Drone::Metrics::Histogram::TYPE_UNIFORM or Drone::Metrics::Histogram::TYPE_BIASED
+    # 
+    def register_histogram(name, type = Drone::Metrics::Histogram::TYPE_UNIFORM)
+      register_metric( Drone::Metrics::Histogram.new(type, name) )
+    end
+    
     ##
     # Register a new gauge
+    # @see Drone::Metrics::Gauge
     # @param [String] type Name of this metric
     # @api public
     # 
@@ -120,5 +125,17 @@ module Drone
       @scheduler.schedule_once(*args, &block)
     end
     
+    
+    
+    
+    
+    
+    ##
+    # Register a monitored class.
+    # @private
+    # 
+    def register_monitored_class(klass)
+      @monitored_classes << klass
+    end
   end
 end

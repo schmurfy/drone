@@ -6,9 +6,10 @@ require File.expand_path('../../utils/ewma', __FILE__)
 
 module Drone
   module Metrics
-    # A meter metric which measures mean throughput and one-, five-, and
+    ##
+    # A meter measures mean throughput and one-, five-, and
     # fifteen-minute exponentially-weighted moving average throughputs.
-    class Meter
+    # 
     class Meter < Metric
       INTERVAL = 5
       
@@ -42,8 +43,7 @@ module Drone
         if @count == 0
           0.0
         else
-          elapsed = Time.now.to_f - @start_time.to_f
-          @count / elapsed
+          @count / (Time.now.to_f - @start_time.to_f)
         end
       end
 

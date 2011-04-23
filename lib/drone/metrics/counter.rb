@@ -3,8 +3,12 @@ require File.expand_path('../metric', __FILE__)
 module Drone
   module Metrics
     
-    class Counter
-      attr_reader :value, :name
+    ##
+    # A Counter store a number which can go up or down,
+    # the counter can change a counter value with
+    # the methods increment and decrement aliased
+    # as inc and dec
+    # 
     class Counter < Metric
       attr_reader :value
     
