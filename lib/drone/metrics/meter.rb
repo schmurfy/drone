@@ -13,37 +13,55 @@ module Drone
     class Meter < Metric
       INTERVAL = 5
       
-      attr_reader :count
-      
       def initialize(name)
         super(name)
-        @start_time = Time.now
-        @count = 0
+        @start_time = Drone::request_number("#{name}:start_time", Time.now)
+        @next_tick = Drone::request_number("#{name}:next_tick_lock", 1)
+        
+        @count = Drone::request_number("#{name}:count", 0)
         @rates = {
-          1   => EWMA.one_minute_ewma,
-          5   => EWMA.five_minutes_ewma,
-          15  => EWMA.fifteen_minutes_ewma
+          1   => EWMA.one_minute_ewma("#{name}:rate1"),
+          5   => EWMA.five_minutes_ewma("#{name}:rate5"),
+          15  => EWMA.fifteen_minutes_ewma("#{name}:rate15")
         }
         
-        Drone::schedule_periodic(INTERVAL){ tick() }
+        Drone::schedule_periodic(INTERVAL) do
+          Fiber.new{ tick() }.resume
+        end
       end
 
       def tick
-        @rates.values.each(&:tick)
+        # init if required
+        @local_next_tick ||= @next_tick.get
+        
+        # ensure only one process will trigger the tick
+        if @next_tick.compare_and_set(@local_next_tick, @local_next_tick + 1)
+          @rates.values.each(&:tick)
+          @local_next_tick += 1
+        else
+          # reset the tick counter to give a chance to this
+          # process to trigger the next tick
+          @local_next_tick = @next_tick.get()
+        end
       end
 
       def mark(events = 1)
-        @count += events
+        @count.inc(events)
         @rates.each do |_, r|
           r.update(events)
         end
       end
+      
+      def count
+        @count.get
+      end
 
       def mean_rate
-        if @count == 0
+        count = @count.get
+        if count == 0
           0.0
         else
-          @count / (Time.now.to_f - @start_time.to_f)
+          count / (Time.now.to_f - @start_time.get.to_f)
         end
       end
 

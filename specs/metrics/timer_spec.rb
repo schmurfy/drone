@@ -11,7 +11,7 @@ EM.describe 'Timer Metrics' do
   
   describe "A blank timer" do
     before do
-      @timer = Metrics::Timer.new()
+      @timer = Metrics::Timer.new('id')
     end
 
     should "have a max of zero" do
@@ -59,7 +59,7 @@ EM.describe 'Timer Metrics' do
   
   describe "Timing a series of events" do
     before do
-      @timer = Metrics::Timer.new()
+      @timer = Metrics::Timer.new('id')
       @timer.update(10)
       @timer.update(20)
       @timer.update(20)

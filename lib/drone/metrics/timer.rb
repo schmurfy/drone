@@ -16,10 +16,10 @@ module Drone
       
       def_delegators :@histogram, :count, :min, :max, :mean, :stdDev, :percentiles, :values
       
-      def initialize(name = 'calls')
+      def initialize(name)
         super(name)
-        @histogram = Histogram.new(Histogram::TYPE_BIASED)
-        clear()
+        
+        @histogram = Histogram.new("#{name}:histogram", :biased)
       end
       
       def count

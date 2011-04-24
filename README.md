@@ -14,29 +14,6 @@ A fully working example is included in examples/simple, to run it
   
 The example will output the collected statistics directly on the console every second.
 
-# How is it done
-
-The library is split in different parts
-
-- the core
-  it contains all the API used to declare which data to collect and how as well as the storage for them
-
-- the metrics
-  that is all the metrics type the library know.
-
-- the interfaces
-  those are the parts which will decides how the stored data are made available.
-
-- the schedulers
-  this is where the timers are scheduled, currently there is only one scheduler: eventmachine
-
-## Constraints
-
-- the name of each metric can be formatted how it pleases you (note that output interfaces may expect some format)
-  but the name is expected to be unique or you could end up reusing the same metric without wanting it.
-  (this only applies to monitor_time and monitor_rate helpers but could apply anywhere else as needed)
-
-
 # Supported Runtimes
 
 - MRI 1.8.7+
@@ -44,13 +21,45 @@ The library is split in different parts
 
 
 # Status
- - Most of the features I wanted in are:
+ - Most of the features I wanted in are (see below for usage examples):
   - timing method calls
   - method calls rate
   - counters
   - gauges
 
  - Decent test coverage (Simplecov report ~ 87% for what is worth)
+ 
+ The gem was created for a specific need and is currently used in production so
+ it can be considered stable.
+
+
+# How is it done
+
+The library is split in different parts
+
+- the core:<br/>
+  it contains all the API used to declare which data to collect and how as well as the storage for them
+
+- the metrics:<br/>
+  that is all the metrics type the library know.
+
+- the interfaces:<br/>
+  those are the parts which will decides how the stored data are made available.
+
+- the schedulers:</br>
+  this is where the timers are scheduled, currently there is only one scheduler: eventmachine
+
+- the storage:<br/>
+  this part decides where the actual data for the metrics are stored, the default is to store them
+  in memory but other possible options are: redis, memcached, etc...
+  The goal for external storage is to allow concurrent applications to share the same metrics, an
+  immediate example of such application is a rails application ran under passenger or any other spawner
+
+## Constraints
+
+- the name of each metric can be formatted how it pleases you (note that output interfaces may expect some format)
+  but the name is expected to be unique or you could end up reusing the same metric without wanting it.
+  (this only applies to monitor_time and monitor_rate helpers but could apply anywhere else as needed)
 
 # Usage
   
@@ -99,6 +108,13 @@ gem to limit the core's dependencies so the only one in core is:
         Drone::add_output(:console, 1)
       
       The values will be printed on the console at the inter
+  
+  The others output are available in their own gems:
+  - drone_json:<br/>
+    The stats are served by a thin server in json
+  
+  - drone_collectd:<br/>
+    The stats are send to a collectd daemon.
   
 # Goals
 

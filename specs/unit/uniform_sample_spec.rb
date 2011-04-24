@@ -1,12 +1,15 @@
 require File.expand_path('../../common', __FILE__)
 
 require 'drone/utils/uniform_sample'
+include Drone
 
 describe 'EWMA' do
   describe "A sample of 100 out of 1000 elements" do
     before do
+      Drone::init_drone()
+      
       @population = (0...1000)
-      @sample = UniformSample.new(100)
+      @sample = UniformSample.new('id1', 100)
       @population.step(1){|n| @sample.update(n) }
     end
 
@@ -24,7 +27,7 @@ describe 'EWMA' do
   describe "A sample of 100 out of 10 elements" do
     before do
       @population = (0...10)
-      @sample = UniformSample.new(100)
+      @sample = UniformSample.new('id1', 100)
       @population.step(1){|n| @sample.update(n) }
     end
 

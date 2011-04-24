@@ -10,26 +10,29 @@ module Drone
     # as inc and dec
     # 
     class Counter < Metric
-      attr_reader :value
     
       def initialize(name, initial_value = 0)
         super(name)
         
-        @value = initial_value
+        @value = Drone::request_number("#{name}:value", initial_value)
+      end
+      
+      def value
+        @value.get
       end
     
       def increment(n = 1)
-        @value += n
+        @value.inc(n)
       end
       alias :inc :increment
     
       def decrement(n = 1)
-        @value -= n
+        @value.dec(n)
       end
       alias :dec :decrement
     
       def clear
-        @value = 0
+        @value.set(0)
       end
     end
     

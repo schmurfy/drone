@@ -12,23 +12,31 @@ module Drone
   # - stddev
   # - percentiles
   # 
-  class Histogram < Metric
-    TYPE_UNIFORM  = lambda{ UniformSample.new(1028) }
-    TYPE_BIASED   = lambda{ ExponentiallyDecayingSample.new(1028, 0.015) }
-    
+  class Histogram < Metric    
     MIN = (-(2**63)).freeze
     MAX = ((2**64) - 1).freeze
     
-    def initialize(sample_or_type = TYPE_UNIFORM, name = "")
+    def initialize(name, sample_or_type = :uniform)
       super(name)
       
-      if sample_or_type.is_a?(Proc)
-        @sample = sample_or_type.call()
+      if sample_or_type.is_a?(Symbol)
+        case sample_or_type
+        when :uniform   then  @sample = UniformSample.new("#{name}:sample", 1028)
+        when :biased    then  @sample = ExponentiallyDecayingSample.new("#{name}:sample", 1028, 0.015)
+        else
+          raise ArgumentError, "unknown type: #{sample_or_type}"
+        end
       else
         @sample = sample_or_type
       end
       
-      clear()
+      @count = Drone::request_number("#{name}:count", 0)
+      @_min = Drone::request_number("#{name}:min", MAX)
+      @_max = Drone::request_number("#{name}:max", MIN)
+      @_sum = Drone::request_number("#{name}:max", 0)
+      @varianceM = Drone::request_number("#{name}:varianceM", -1)
+      @varianceS = Drone::request_number("#{name}:varianceS", 0)
+      
     end
     
     def clear
@@ -42,37 +50,37 @@ module Drone
     end
     
     def update(val)
-      @count += 1
+      @count.inc
       @sample.update(val)
       set_max(val);
       set_min(val);
-      @_sum += val
+      @_sum.inc(val)
       update_variance(val)
     end
     
     def count
-      @count
+      @count.get
     end
     
     def max
-      (@count > 0) ? @_max : 0.0
+      (@count.get > 0) ? @_max.get : 0.0
     end
     
     def min
-      (@count > 0) ? @_min : 0.0
+      (@count.get > 0) ? @_min.get : 0.0
     end
     
     def mean
-      (@count > 0) ? @_sum.to_f / @count : 0.0
+      (@count.get > 0) ? @_sum.get.to_f / @count.get : 0.0
     end
     
     def stdDev
-      (@count > 0) ? Math.sqrt( variance() ) : 0.0
+      (@count.get > 0) ? Math.sqrt( variance() ) : 0.0
     end
     
     def percentiles(*percentiles)
       scores = Array.new(percentiles.size, 0)
-      if @count > 0
+      if @count.get > 0
         values = @sample.values.sort
         percentiles.each.with_index do |p, i|
           pos = p * (values.size + 1)
@@ -106,36 +114,37 @@ module Drone
     end
     
     def update_variance(val)
-      if @varianceM == -1
-        @varianceM = doubleToLongBits(val)
+      if @varianceM.get == -1
+        @varianceM.set( doubleToLongBits(val) )
       else
-        oldMCas = @varianceM
+        oldMCas = @varianceM.get
         oldM = longBitsToDouble(oldMCas)
         newM = oldM + ((val - oldM) / count())
         
-        oldSCas = @varianceS
+        oldSCas = @varianceS.get
         oldS = longBitsToDouble(oldSCas)
         newS = oldS + ((val - oldM) * (val - newM))
         
-        @varianceM = doubleToLongBits(newM)
-        @varianceS = doubleToLongBits(newS)
+        @varianceM.set( doubleToLongBits(newM) )
+        @varianceS.set( doubleToLongBits(newS) )
       end
     end
     
     def variance
-      if @count <= 1
+      count = @count.get
+      if count <= 1
         0.0
       else
-        longBitsToDouble(@varianceS) / (count() - 1)
+        longBitsToDouble(@varianceS.get) / (count - 1)
       end
     end
     
     def set_max(val)
-      (@_max >= val) || @_max = val
+      (@_max.get >= val) || @_max.set(val)
     end
     
     def set_min(val)
-      (@_min <= val) || @_min = val
+      (@_min.get <= val) || @_min.set(val)
     end
     
     

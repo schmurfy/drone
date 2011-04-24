@@ -3,10 +3,13 @@ require File.expand_path('../../common', __FILE__)
 require 'drone/utils/ewma'
 
 describe 'EWMA' do
+  before do
+    Drone::init_drone
+  end
   
   describe 'A 1min EWMA with a value of 3' do
     before do
-      @ewma = EWMA.one_minute_ewma
+      @ewma = Drone::EWMA.one_minute_ewma('id2')
       @ewma.update(3)
       @ewma.tick()
     end
@@ -52,7 +55,7 @@ describe 'EWMA' do
   
   describe 'A 5min EWMA with a value of 3' do
     before do
-      @ewma = EWMA.five_minutes_ewma
+      @ewma = Drone::EWMA.five_minutes_ewma('id1')
       @ewma.update(3)
       @ewma.tick()
     end
@@ -95,7 +98,7 @@ describe 'EWMA' do
   
   describe 'A 15min EWMA with a value of 3' do
     before do
-      @ewma = EWMA.fifteen_minutes_ewma
+      @ewma = Drone::EWMA.fifteen_minutes_ewma('id')
       @ewma.update(3)
       @ewma.tick()
     end

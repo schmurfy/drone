@@ -1,10 +1,12 @@
 require File.expand_path('../../common', __FILE__)
 
+require 'drone/core'
 require 'drone/metrics/counter'
 include Drone
 
 describe 'Counter Metrics' do
   before do
+    Drone::init_drone()
     @counter = Metrics::Counter.new('something')
   end
 

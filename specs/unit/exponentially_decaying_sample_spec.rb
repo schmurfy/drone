@@ -1,12 +1,15 @@
 require File.expand_path('../../common', __FILE__)
 
 require 'drone/utils/exponentially_decaying_sample'
+include Drone
 
 describe 'Exponentially Decaying Sample' do
   describe "A sample of 100 out of 1000 elements" do
     before do
+      Drone::init_drone(nil, Storage::Memory.new)
+      
       @population = (0...100)
-      @sample = ExponentiallyDecayingSample.new(1000, 0.99)
+      @sample = ExponentiallyDecayingSample.new('id1', 1000, 0.99)
       @population.step(1){|n| @sample.update(n) }
     end
     
@@ -27,7 +30,7 @@ describe 'Exponentially Decaying Sample' do
   describe "A sample of 100 out of 10 elements" do
     before do
       @population = (0...10)
-      @sample = ExponentiallyDecayingSample.new(100, 0.99)
+      @sample = ExponentiallyDecayingSample.new('id1', 100, 0.99)
       @population.step(1){|n| @sample.update(n) }
     end
 
@@ -47,7 +50,7 @@ describe 'Exponentially Decaying Sample' do
   describe "A heavily-biased sample of 100 out of 1000 elements" do
     before do
       @population = (0...100)
-      @sample = ExponentiallyDecayingSample.new(1000, 0.99)
+      @sample = ExponentiallyDecayingSample.new('id1', 1000, 0.99)
       @population.step(1){|n| @sample.update(n) }
     end
 

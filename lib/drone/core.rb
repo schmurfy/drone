@@ -1,5 +1,9 @@
+require 'forwardable'
+
 
 require File.expand_path('../schedulers/eventmachine', __FILE__)
+
+require File.expand_path('../storage/memory', __FILE__)
 
 module Drone
   ##
@@ -20,11 +24,20 @@ module Drone
   # 
   module Schedulers; end
   
+  
+  ##
+  # This module contains the class used for storage,
+  # they determine where the metric's data are stored
+  # 
+  module Storage; end
+  
   class <<self
+    extend Forwardable
     
-    def init_drone(scheduler = Schedulers::EMScheduler)
+    def init_drone(scheduler = Schedulers::EMScheduler, storage = Storage::Memory.new)
       @metrics = []
       @scheduler = scheduler
+      @storage = storage
       @monitored_classes = []
       @output_modules = []
     end
@@ -84,8 +97,8 @@ module Drone
     # @param [String] name Name of this metric
     # @param [optional,Enum] type one of Drone::Metrics::Histogram::TYPE_UNIFORM or Drone::Metrics::Histogram::TYPE_BIASED
     # 
-    def register_histogram(name, type = Drone::Metrics::Histogram::TYPE_UNIFORM)
-      register_metric( Drone::Metrics::Histogram.new(type, name) )
+    def register_histogram(name, type = :uniform)
+      register_metric( Drone::Metrics::Histogram.new(name, type) )
     end
     
     ##
@@ -111,22 +124,9 @@ module Drone
       metric
     end
     
-    ##
-    # (see EMScheduler#schedule_periodic)
-    # 
-    def schedule_periodic(*args, &block)
-      @scheduler.schedule_periodic(*args, &block)
-    end
     
-    ##
-    # (see EMScheduler#schedule_once)
-    # 
-    def schedule_once(*args, &block)
-      @scheduler.schedule_once(*args, &block)
-    end
-    
-    
-    
+    def_delegators :@storage, :request_fixed_size_array, :request_number, :request_hash
+    def_delegators :@scheduler, :schedule_periodic, :schedule_once
     
     
     
