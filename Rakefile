@@ -15,6 +15,6 @@ begin
   require 'yard'
   require 'bluecloth'
   YARD::Rake::YardocTask.new(:doc)
-rescue
+rescue LoadError
   
 end
