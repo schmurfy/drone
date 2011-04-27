@@ -27,10 +27,10 @@ The example will output the collected statistics directly on the console every s
   - counters
   - gauges
 
- - Decent test coverage (Simplecov report ~ 87% for what is worth)
+ - Good test coverage
  
- The gem was created for a specific need and is currently used in production so
- it can be considered stable.
+ The gem was created for a specific need and is currently used in preproduction environment,
+ no major bugs until now.
 
 
 # How is it done
@@ -67,30 +67,34 @@ The library is split in different parts
   this library:
   
   - the first one is to just instantiate metrics by hand and use them directly
+  
+      ``` ruby
+      require 'drone'
+      Drone::init_drone()
+      @counter = Drone::Metris::Counter.new('my_counter')
     
-        require 'drone'
-        Drone::init_drone()
-        @counter = Drone::Metris::Counter.new('my_counter')
-        
-        def some_method
-          @counter.inc()
-        end
+      def some_method
+        @counter.inc()
+      end
+      ```
   
   - the other way is to instrument a class:
   
-        require 'drone'
-        Drone::init_drone()
+      ``` ruby
+      require 'drone'
+      Drone::init_drone()
+      
+      class User
+        include Drone::Monitoring
         
-        class User
-          include Drone::Monitoring
-          
-          monitor_rate("users/new")
-          def initialize(login, pass); end
-          
-          monitor_time("users/rename")
-          def rename(new_login); end
-          
-        end
+        monitor_rate("users/new")
+        def initialize(login, pass); end
+        
+        monitor_time("users/rename")
+        def rename(new_login); end
+        
+      end
+      ```
       
       This code will create three metrics:
       - "users/new"       : how many users are created each second
@@ -102,14 +106,17 @@ Once you have your data you need to add a way to serve them, each lives in a sep
 gem to limit the core's dependencies so the only one in core is:
   
   - console output (puts), mainly for debug:
-      
-        require 'drone'
-        Drone::init_drone()
-        Drone::add_output(:console, 1)
+  
+      ``` ruby
+      require 'drone'
+      Drone::init_drone()
+      Drone::add_output(:console, 1)
+      ```
       
       The values will be printed on the console at the inter
   
   The others output are available in their own gems:
+  
   - drone_json:<br/>
     The stats are served by a thin server in json
   
@@ -129,23 +136,24 @@ gem to limit the core's dependencies so the only one in core is:
   optional part instead of in the core. There should not be any problem to implements it
   in an includable module not included as default (it may requires some modifications in the core):
   
-    require 'drone'
-    require 'drone/threadsafe'
+  ``` ruby
+  require 'drone'
+  require 'drone/threadsafe'
     
-    [...]
-  
+  # [...]
+  ```
   
 # Development
 
   Installing the development environment is pretty simple thanks to bundler:
-    
+  
     gem install bundler
     bundle
   
 ## Running specs
   
   The specs are written with bacon, mocha and em-spec, they can be ran with:
-    
+  
     rake spec
   
 ## Build the doc
