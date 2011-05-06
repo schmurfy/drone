@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
+require 'fiber'
 
 $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 require 'drone'
@@ -22,11 +23,9 @@ class User
   monitor_time("users:do_something:time")
   monitor_rate("users:do_something:rate")
   def do_something
-    # just eat some cpu
-    0.upto(rand(2000)) do |n|
-      str = "a"
-      200.times{ str << "b" }
-    end
+    fb = Fiber.current
+    EM::add_timer(1){ fb.resume() }
+    Fiber.yield
   end
 end
 
@@ -45,7 +44,9 @@ EM::run do
     counter1.increment()
   end
   
-  EM::add_periodic_timer(1) do
-    a.do_something()
+  EM::add_periodic_timer(2) do
+    Fiber.new do
+      a.do_something()
+    end.resume
   end
 end
