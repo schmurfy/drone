@@ -19,7 +19,7 @@ module Drone
     def clear
       @values.clear()
       @count.set(0)
-      @start_time.set(Time.now.to_i)
+      @start_time.set(Time.now.to_i * 1000)
       @next_scale_time.set( current_time() + RESCALE_THRESHOLD )
     end
   
@@ -56,7 +56,7 @@ module Drone
   
     def rescale(now)
       @next_scale_time.set( current_time() + RESCALE_THRESHOLD )
-      new_start = Time.now.to_i
+      new_start = Time.now.to_i * 1000
       old_start = @start_time.get_and_set(new_start)
     
       @values = Hash[ @values.map{ |k,v|
