@@ -9,7 +9,7 @@ module Drone
       @id = id
       @values = Drone::request_hash("#{@id}:values")
       @count = Drone::request_number("#{@id}:count", 0)
-      @start_time = Drone::request_number("#{@id}:start_time", Time.now.to_f)
+      @start_time = Drone::request_number("#{@id}:start_time", current_time())
       @next_scale_time = Drone::request_number("#{@id}:next_scale_time", current_time() + RESCALE_THRESHOLD)
       
       @alpha = alpha
@@ -19,7 +19,7 @@ module Drone
     def clear
       @values.clear()
       @count.set(0)
-      @start_time.set(Time.now.to_i * 1000)
+      @start_time.set(current_time())
       @next_scale_time.set( current_time() + RESCALE_THRESHOLD )
     end
   
@@ -29,7 +29,7 @@ module Drone
     end
   
   
-    def update(val, time = Time.now.to_f)
+    def update(val, time = current_time)
       priority = weight(time - @start_time.get) / rand()
       count = @count.inc
       if count <= @reservoir_size
@@ -51,12 +51,14 @@ module Drone
     end
   
     def values
-      @values.values
+      @values.keys.sort.inject([]) do |buff, key|
+        buff << @values[key]
+      end
     end
   
     def rescale(now)
       @next_scale_time.set( current_time() + RESCALE_THRESHOLD )
-      new_start = Time.now.to_i * 1000
+      new_start = current_time()
       old_start = @start_time.get_and_set(new_start)
     
       @values = Hash[ @values.map{ |k,v|
