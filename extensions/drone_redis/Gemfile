@@ -1,0 +1,7 @@
+source "http://rubygems.org"
+
+# Specify your gem's dependencies in drone_redis.gemspec
+gemspec
+
+gem 'drone', :path => "/Users/schmurfy/Dev/personal/drone"
+
