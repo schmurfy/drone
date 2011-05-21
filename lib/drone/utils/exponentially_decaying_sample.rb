@@ -30,9 +30,7 @@ module Drone
   
   
     def update(val, time = current_time)
-      r = rand()
-      start_time = @start_time.get
-      priority = weight(time - start_time) / r
+      priority = weight(time - @start_time.get) / rand()
       count = @count.inc
       if count <= @reservoir_size
         @values[priority] = val
@@ -49,14 +47,6 @@ module Drone
       now = current_time()
       if now >= @next_scale_time.get
         rescale(now)
-      end
-      
-    rescue => err
-      puts "ExponentiallyDecayingSample::update raised #{err.inspect}"
-      puts "priority: #{priority}, time: #{time}, start_time: #{start_time}"
-      puts "Backtrace:"
-      err.backtrace.each do |line|
-        puts line
       end
     end
   
