@@ -6,8 +6,6 @@ include Drone
 describe 'Exponentially Decaying Sample' do
   describe "A sample of 100 out of 1000 elements" do
     before do
-      Drone::init_drone(nil, Storage::Memory.new)
-      
       @population = (0...100)
       @sample = ExponentiallyDecayingSample.new('id1', 1000, 0.99)
       @population.step(1){|n| @sample.update(n) }
@@ -65,7 +63,7 @@ describe 'Exponentially Decaying Sample' do
     end
     
     should "rescale after 1 hour" do
-      @sample.expects(:rescale).with(anything())
+      @sample.expects(:rescale).with(anything(), anything())
       
       Delorean.time_travel_to("2 hours from now") do
         @sample.update(1)
@@ -76,7 +74,7 @@ describe 'Exponentially Decaying Sample' do
     end
     
     it 'can rescale' do
-      @sample.rescale(Time.now)
+      @sample.rescale(Time.now, Time.now)
       @sample.values.should.not == []
       # TODO: add a real test here, for now it only tests
       # that the code actually runs

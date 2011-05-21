@@ -30,9 +30,7 @@ module Drone
   
   
     def update(val, time = current_time)
-      r = rand()
-      start_time = @start_time.get
-      priority = weight(time - start_time) / r
+      priority = weight(time - @start_time.get) / generate_random()
       count = @count.inc
       if count <= @reservoir_size
         @values[priority] = val
@@ -47,16 +45,9 @@ module Drone
       end
     
       now = current_time()
-      if now >= @next_scale_time.get
-        rescale(now)
-      end
-      
-    rescue => err
-      puts "ExponentiallyDecayingSample::update raised #{err.inspect}"
-      puts "priority: #{priority}, time: #{time}, start_time: #{start_time}"
-      puts "Backtrace:"
-      err.backtrace.each do |line|
-        puts line
+      next_scale = @next_scale_time.get
+      if now >= next_scale
+        rescale(now, next_scale)
       end
     end
   
@@ -66,18 +57,33 @@ module Drone
       end
     end
   
-    def rescale(now)
-      @next_scale_time.set( current_time() + RESCALE_THRESHOLD )
-      new_start = current_time()
-      old_start = @start_time.get_and_set(new_start)
-    
-      @values = Hash[ @values.map{ |k,v|
-          [k * Math.exp(-@alpha * (new_start - old_start)), v]
-        }]
-    
+    def rescale(now, next_scale)
+      if @next_scale_time.compare_and_set(next_scale, now + RESCALE_THRESHOLD)
+        new_start = current_time()
+        old_start = @start_time.get_and_set( new_start )
+        
+        @values = Hash[ @values.map{ |k,v|
+            [k * Math.exp(-@alpha * (new_start - old_start)), v]
+          }]
+      end
     end
   
   private
+    
+    ##
+    # Generates a non-zero random number
+    # According to the ruby documentation rand() can return 0
+    # so we ensure this will never happen
+    # 
+    # @return [Float] The random number
+    # 
+    def generate_random()
+      begin
+        r = Kernel.rand()
+      end while r == 0.0
+    
+      r
+    end
   
     def current_time
       Time.now.to_f * 1000
