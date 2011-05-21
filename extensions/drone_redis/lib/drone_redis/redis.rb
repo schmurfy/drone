@@ -53,6 +53,9 @@ module Drone
             @store.multi
             set(new_value)
             @store.exec
+            true
+          else
+            false
           end
         end
         

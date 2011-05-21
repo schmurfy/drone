@@ -36,6 +36,7 @@ module Drone
           # dummy implementation, with memory storage nothing can
           # happen to our data
           set(new_value)
+          true
         end
         
       end
