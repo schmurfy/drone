@@ -19,11 +19,6 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
   
-  s.add_dependency("eventmachine", "~> 0.12.10")
+  s.add_dependency("eventmachine", ">= 0.12.10")
   
-  s.add_development_dependency("mocha")
-  s.add_development_dependency("bacon")
-  s.add_development_dependency("schmurfy-em-spec")
-  s.add_development_dependency("delorean")
-  s.add_development_dependency("simplecov")
 end
