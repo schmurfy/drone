@@ -20,5 +20,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   
   s.add_dependency("eventmachine",  ">= 0.12.10")
+  s.add_dependency("flt",           "~> 1.3.0")
   
 end

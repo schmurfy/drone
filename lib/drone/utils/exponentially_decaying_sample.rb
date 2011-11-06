@@ -1,10 +1,29 @@
+require 'flt'
 require File.expand_path('../../core', __FILE__)
 
 module Drone
-  class ExponentiallyDecayingSample
-    # 1 hour in ms
-    RESCALE_THRESHOLD = (1 * 60 * 60 * 1000).freeze
   
+  ##
+  # An exponentially-decaying random sample
+  # 
+  class ExponentiallyDecayingSample
+    # 1 hour
+    RESCALE_THRESHOLD = (1 * 60 * 60).freeze
+    
+    ##
+    # Create a new dataset, if the decay factor is too big
+    # the flt ruby library will be used for internal computations
+    # to allow greater precision, the switch happens if alpha is
+    # higher than 0.1.
+    # 
+    # @param [String] id A unique id representing this
+    #   dataset.
+    # @param [Integer] reservoir_size the number of samples
+    #   to keep.
+    # @param [Number] alpha the decay factor, the higher this
+    #   number, the more biased the sample will be towards
+    #   newer values.
+    # 
     def initialize(id, reservoir_size, alpha)
       @id = id
       @values = Drone::request_hash("#{@id}:values")
@@ -28,18 +47,20 @@ module Drone
       (@values.size < count) ? @values.size : count
     end
   
-  
     def update(val, time = current_time)
       priority = weight(time - @start_time.get) / generate_random()
-      count = @count.inc
-      if count <= @reservoir_size
+      new_count = @count.inc
+      
+      if new_count <= @reservoir_size
         @values[priority] = val
       else
-        first = @values.keys.min
+        first = @values.keys[0]
         if first < priority
-          @values[priority] = val
-          while @values.delete(first) == nil
-            first = @values.keys.min
+          old_val, @values[priority] = @values[priority], val
+          unless old_val
+            while @values.delete(first) == nil
+              first = @values.keys[0]
+            end
           end
         end
       end
@@ -56,23 +77,37 @@ module Drone
         buff << @values[key]
       end
     end
-  
+    
     def rescale(now, next_scale)
       if @next_scale_time.compare_and_set(next_scale, now + RESCALE_THRESHOLD)
         new_start = current_time()
         old_start = @start_time.get_and_set( new_start )
+        time_diff = new_start - old_start
         
         @values = Hash[ @values.map{ |k,v|
-            [k * Math.exp(-@alpha * (new_start - old_start)), v]
+            [k * math_exp(-@alpha * time_diff), v]
           }]
+        
       end
     end
   
   private
     
+    def use_flt?
+      @alpha > 0.1
+    end
+    
+    def math_exp(n)
+      if use_flt?
+        Flt::DecNum(Rational(n)).exp()
+      else
+        Math.exp(n)
+      end
+    end
+    
     ##
     # Generates a non-zero random number
-    # According to the ruby documentation rand() can return 0
+    # According to the ruby documentation rand() could return 0
     # so we ensure this will never happen
     # 
     # @return [Float] The random number
@@ -81,16 +116,20 @@ module Drone
       begin
         r = Kernel.rand()
       end while r == 0.0
-    
-      r
+      
+      if use_flt?
+        Flt::DecNum(Rational(r))
+      else
+        r
+      end
     end
   
     def current_time
-      Time.now.to_f * 1000
+      Time.now.to_f
     end
   
     def weight(n)
-      Math.exp(@alpha * n)
+      math_exp(@alpha * n)
     end
   
   end

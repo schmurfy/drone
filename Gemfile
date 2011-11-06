@@ -6,7 +6,7 @@ gemspec
 group(:test) do
   gem 'rake'
   gem 'mocha'
-  gem 'schmurfy-bacon'
+  gem 'schmurfy-bacon', :path => '/Users/schmurfy/Dev/personal/bacon'
   gem 'schmurfy-em-spec'
   gem 'delorean'
   gem 'simplecov'

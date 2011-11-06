@@ -41,12 +41,13 @@ module Drone
     
     def clear
       @sample.clear()
-      @count = 0
-      @_min = MAX
-      @_max = MIN
-      @_sum = 0
-      @varianceM = -1
-      @varianceS = 0
+            
+      @count = Drone::request_number("#{name}:count", 0)
+      @_min = Drone::request_number("#{name}:min", MAX)
+      @_max = Drone::request_number("#{name}:max", MIN)
+      @_sum = Drone::request_number("#{name}:max", 0)
+      @varianceM = Drone::request_number("#{name}:varianceM", -1)
+      @varianceS = Drone::request_number("#{name}:varianceS", 0)
     end
     
     def update(val)
