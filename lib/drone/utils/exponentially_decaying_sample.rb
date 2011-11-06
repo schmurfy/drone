@@ -12,9 +12,9 @@ module Drone
     
     ##
     # Create a new dataset, if the decay factor is too big
-    # the flt ruby library will be used for internal computations
-    # to allow greater precision, the switch happens if alpha is
-    # higher than 0.1.
+    # the flt ruby library is used for internal computations
+    # to allow greater precision, the performance impact should be
+    # minimal.
     # 
     # @param [String] id A unique id representing this
     #   dataset.
@@ -94,7 +94,7 @@ module Drone
   private
     
     def use_flt?
-      @alpha > 0.1
+      true
     end
     
     def math_exp(n)
