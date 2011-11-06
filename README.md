@@ -16,7 +16,7 @@ The example will output the collected statistics directly on the console every s
 
 # Supported Runtimes
 
-- MRI 1.8.7+
+- MRI 1.9.2+
 - Rubinius 1.2.2+
 
 
@@ -29,8 +29,7 @@ The example will output the collected statistics directly on the console every s
 
  - Good test coverage
  
- The gem was created for a specific need and is currently used in preproduction environment,
- no major bugs until now.
+ The gem was created for a specific need and is currently used in production environment.
 
 
 # How is it done
@@ -154,9 +153,9 @@ gem to limit the core's dependencies so the only one in core is:
   
   The specs are written with bacon, mocha and em-spec, they can be ran with:
   
-    rake spec
+    bundle exec rake
   
 ## Build the doc
   You will need the gems: yard and bluecloth and then run:
   
-    rake doc
+    bundle exec rake doc
