@@ -9,7 +9,7 @@ describe 'Histogram' do
     Drone::init_drone()
   end
   
-  describe "A histogram with zero recorded valeus" do
+  describe "A histogram with zero recorded values" do
     before do
       @histogram = Histogram.new("id1", UniformSample.new("id1:sample", 100))
     end

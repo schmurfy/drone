@@ -28,7 +28,7 @@ module Drone
       def monitor_rate(name)
         meter = Drone::find_metric(name) || Metrics::Meter.new(name)
         unless meter.is_a?(Metrics::Meter)
-          raise(TypeError, "metric #{name} is already defined as #{rate.class}")
+          raise AlreadyDefined, "metric #{name} is already defined as #{meter.class}"
         end
         
         Drone::register_metric(meter)
@@ -47,7 +47,7 @@ module Drone
       def monitor_time(name)
         timer = Drone::find_metric(name) || Metrics::Timer.new(name)
         unless timer.is_a?(Metrics::Timer)
-          raise(TypeError, "metric #{name} is already defined as #{rate.class}")
+          raise AlreadyDefined, "metric #{name} is already defined as #{timer.class}"
         end
         Drone::register_metric(timer)
         @_timer_waiting = timer

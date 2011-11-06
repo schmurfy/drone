@@ -7,7 +7,7 @@ require File.expand_path('../../utils/ewma', __FILE__)
 module Drone
   module Metrics
     ##
-    # A meter measures mean throughput and one-, five-, and
+    # This meter measures mean throughput and one-, five-, and
     # fifteen-minute exponentially-weighted moving average throughputs.
     # 
     class Meter < Metric

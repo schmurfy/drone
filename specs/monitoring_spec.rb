@@ -1,4 +1,4 @@
-require File.expand_path('../../common', __FILE__)
+require File.expand_path('../common', __FILE__)
 
 require 'drone'
 require 'drone/monitoring'
@@ -21,9 +21,33 @@ EM.describe 'Monitoring' do
         monitor_rate("users/with_block")
         def method_with_block(&block); block.call; end
         
+        monitor_time("users/timed")
+        def timed_method; end;
+        
       end
       @obj = @klass.new
       
+    end
+    
+    should "raise an error if the metric name os already used (rate => time)" do
+      proc{
+        @klass.instance_eval do
+          monitor_time("users/no_args")
+        end
+      }.should.raise(Drone::AlreadyDefined)
+      
+      done
+    end
+    
+    should "raise an error if the metric name os already used (time => rate)" do
+      
+      proc{
+        @klass.instance_eval do
+          monitor_rate("users/timed")
+        end
+      }.should.raise(Drone::AlreadyDefined)
+      
+      done
     end
     
     should 'reuse same meter for every instances of this class' do

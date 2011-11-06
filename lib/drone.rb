@@ -6,6 +6,7 @@ module Drone
   
   require_lib("drone/version")
   
+  require_lib("drone/errors")
   require_lib("drone/monitoring")
   
   # Schedulers
