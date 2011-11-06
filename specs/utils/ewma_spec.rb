@@ -23,6 +23,7 @@ describe 'EWMA' do
     
     should "have a rate of 0.6 events/sec after the first tick" do
       @ewma.rate.should.be.close(0.6, 0.000001)
+      @ewma.rate(:ms).should.be.close(0.0006, 0.000001)
     end
     
     {

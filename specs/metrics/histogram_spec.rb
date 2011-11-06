@@ -17,6 +17,10 @@ describe 'Histogram' do
     should "have a count of 0" do
       @histogram.count.should == 0
     end
+    
+    should "have a variance of 0" do
+      @histogram.send(:variance).should == 0
+    end
 
     should "have a max of 0" do
       @histogram.max.should == 0

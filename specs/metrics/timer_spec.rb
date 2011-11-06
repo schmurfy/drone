@@ -9,7 +9,7 @@ EM.describe 'Timer Metrics' do
     Drone::start_monitoring()
   end
   
-  describe "A blank timer" do
+  describe "A newly created timer" do
     before do
       @timer = Metrics::Timer.new('id')
     end
@@ -89,6 +89,12 @@ EM.describe 'Timer Metrics' do
 
     should "calclate the standard deviation" do
       @timer.stdDev.should.be.close?(11.401, 0.001)
+      done
+    end
+    
+    it 'can be cleared' do
+      @timer.clear()
+      @timer.count.should == 0
       done
     end
 

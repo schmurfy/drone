@@ -48,14 +48,22 @@ EM.describe 'Meter Metrics' do
 
   describe "A meter metric with three events" do
     before do
-      @meter = Metrics::Meter.new("thangs")
-      @meter.mark(3)
+      Delorean.time_travel_to("2 second ago") do
+        @meter = Metrics::Meter.new("thangs")
+        @meter.mark(3)
+      end
     end
 
     should "have a count of three" do
       @meter.count.should == 3
       done
     end
+    
+    should "have a mean rate of 0 events/sec" do
+      @meter.mean_rate.should.be.close?(1.5, 0.01)
+      done
+    end
+    
   end
   
 end
