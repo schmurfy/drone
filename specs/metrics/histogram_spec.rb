@@ -11,7 +11,7 @@ describe 'Histogram' do
   
   describe "A histogram with zero recorded values" do
     before do
-      @histogram = Histogram.new("id1", UniformSample.new("id1:sample", 100))
+      @histogram = Metrics::Histogram.new("id1", UniformSample.new("id1:sample", 100))
     end
 
     should "have a count of 0" do
@@ -54,7 +54,7 @@ describe 'Histogram' do
   
   describe "A histogram of the numbers 1 through 10000" do
     before do
-      @histogram = Histogram.new("id1", UniformSample.new("id1:sample", 100000) )
+      @histogram = Metrics::Histogram.new("id1", UniformSample.new("id1:sample", 100000) )
       (1..10000).each{|n| @histogram.update(n) }
     end
 
