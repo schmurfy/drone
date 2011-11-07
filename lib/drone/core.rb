@@ -96,6 +96,7 @@ module Drone
     # @see Drone::Metrics::Histogram
     # @param [String] name Name of this metric
     # @param [optional,Enum] type one of Drone::Metrics::Histogram::TYPE_UNIFORM or Drone::Metrics::Histogram::TYPE_BIASED
+    # @api public
     # 
     def register_histogram(name, type = :uniform)
       register_metric( Drone::Metrics::Histogram.new(name, type) )
@@ -109,6 +110,16 @@ module Drone
     # 
     def register_gauge(type, &block)
       register_metric( Drone::Metrics::Gauge.new(type, &block) )
+    end
+    
+    ##
+    # Register a new timer
+    # @see Drone::Metrics::Timer
+    # @param [String] name Name of this metric
+    # @api public
+    # 
+    def register_timer(name)
+      register_metric( Drone::Metrics::Timer.new(name) )
     end
     
     ##

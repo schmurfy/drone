@@ -43,7 +43,7 @@ module Drone
       
       ##
       # time and record the duration of the block
-      # @yield [] The block to time
+      # @yield [Proc] The block to time
       # 
       def time
         started_at = Time.now.to_f
