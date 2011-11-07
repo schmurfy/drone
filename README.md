@@ -1,4 +1,6 @@
 
+[![Build Status](https://secure.travis-ci.org/schmurfy/drone.png)](https://secure.travis-ci.org/schmurfy/drone.png)
+
 # What is this ?
 
 Drone is a monitoring library designed to collect data from your application and export them
