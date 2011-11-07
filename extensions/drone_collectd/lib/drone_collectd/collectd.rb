@@ -68,7 +68,7 @@ module Drone
               data.add_value(:gauge, m.five_minutes_rate )
               data.add_value(:gauge, m.fifteen_minutes_rate )
             
-            when Metrics::Timer
+            when Metrics::Timer, Metrics::Histogram
               # min:GAUGE:0:U,  max:GAUGE:0:U,  mean:GAUGE:0:U, stddev:GAUGE:U:U, median:GAUGE:0:U, p75:GAUGE:0:U, p95:GAUGE:0:U
               data.add_value(:gauge, m.min )
               data.add_value(:gauge, m.max )
