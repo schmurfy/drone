@@ -19,7 +19,6 @@ The example will output the collected statistics directly on the console every s
 # Supported Runtimes
 
 - MRI 1.9.2+
-- Rubinius 1.2.2+
 
 
 # Status

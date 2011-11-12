@@ -1,4 +1,7 @@
-require 'flt'
+require 'bigdecimal'
+require 'bigdecimal/util'
+require 'bigdecimal/math'
+
 require File.expand_path('../../core', __FILE__)
 
 module Drone
@@ -84,8 +87,10 @@ module Drone
         old_start = @start_time.get_and_set( new_start )
         time_diff = new_start - old_start
         
+        coeff = math_exp(-@alpha * time_diff)
+        
         @values = Hash[ @values.map{ |k,v|
-            [k * math_exp(-@alpha * time_diff), v]
+            [k * coeff, v]
           }]
         
       end
@@ -99,7 +104,7 @@ module Drone
     
     def math_exp(n)
       if use_flt?
-        Flt::DecNum(Rational(n)).exp()
+        BigMath.exp( BigDecimal(n.to_s), 2 )
       else
         Math.exp(n)
       end
@@ -118,7 +123,7 @@ module Drone
       end while r == 0.0
       
       if use_flt?
-        Flt::DecNum(Rational(r))
+        BigDecimal(r.to_s)
       else
         r
       end

@@ -46,7 +46,7 @@ describe 'Exponentially Decaying Sample' do
       arr.should == []
     end
     
-    should "rescale after 1 hour2" do
+    should "rescale after 1 hour" do
       Delorean.time_travel_to("1 hours from now") do
         @sample.update(42)
       end
