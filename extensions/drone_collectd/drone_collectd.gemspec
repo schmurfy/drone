@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   
   s.add_dependency('drone',         '~> 1.0.4')
-  s.add_dependency('eventmachine',  '~> 0.12.10')
+  s.add_dependency('eventmachine',  '>= 0.12.10')
   
   s.add_development_dependency("mocha")
   s.add_development_dependency("bacon")
