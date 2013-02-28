@@ -21,7 +21,7 @@ end
 require 'bundler/setup'
 
 require 'bacon'
-require 'mocha'
+require 'mocha/api'
 require 'delorean'
 require 'em-spec/bacon'
 EM.spec_backend = EventMachine::Spec::Bacon
