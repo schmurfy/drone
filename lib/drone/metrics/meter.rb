@@ -25,9 +25,7 @@ module Drone
           15  => EWMA.fifteen_minutes_ewma("#{name}:rate15")
         }
         
-        Drone::schedule_periodic(INTERVAL) do
-          Fiber.new{ tick() }.resume
-        end
+        Drone::schedule_periodic(INTERVAL, &method(:tick))
       end
 
       def tick
