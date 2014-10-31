@@ -78,6 +78,10 @@ module Drone
       def stdDev
         (@count.get > 0) ? Math.sqrt( variance() ) : 0.0
       end
+      
+      def median
+        percentiles(0.5)[0]
+      end
     
       def percentiles(*percentiles)
         scores = Array.new(percentiles.size, 0)

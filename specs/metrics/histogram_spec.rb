@@ -84,6 +84,8 @@ describe 'Histogram' do
       percentiles[0].should.be.close?(5000.5, 0.01)
       percentiles[1].should.be.close?(7500.75, 0.01)
       percentiles[2].should.be.close?(9900.99, 0.01)
+      
+      @histogram.median.should == percentiles[0]
     end
 
     should "have 10000 values" do
